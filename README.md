@@ -1,2 +1,14 @@
-# life-expectancy-female-analysis
-Proyecto de Ciencia de Datos sobre la esperanza de vida femenina usando datos de Gapminder.
+life-expectancy-female-analysis/
+├── README.md
+├── Datos/
+│   ├── life_expectancy_female.csv
+│   ├── depuracion.R
+├── Dashboard/
+│   ├── dashboard.Rmd
+│   ├── dashboard.html
+├── Informe/
+│   ├── informe.Rmd
+│   ├── informe.pdf
+├── Presentación/
+│   ├── presentacion.Rmd
+│   └── presentacion.pdf
