@@ -1,0 +1,55 @@
+# Cargar librerías necesarias
+library(shiny)
+library(tidyverse)
+
+# Cargar los datos depurados
+datos <- read_csv("Datos/base_depurada.csv")
+
+# Interfaz del usuario
+ui <- fluidPage(
+  titlePanel("Esperanza de vida femenina (Gapminder)"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("pais", "Selecciona un país:",
+                  choices = unique(datos$country),
+                  selected = "Spain"),
+      sliderInput("rango_anios", "Rango de años:",
+                  min = min(datos$year), max = max(datos$year),
+                  value = c(1950, 2025), step = 1)
+    ),
+    
+    mainPanel(
+      plotOutput("grafico_vida"),
+      textOutput("resumen")
+    )
+  )
+)
+
+# Lógica del servidor
+server <- function(input, output) {
+  
+  datos_filtrados <- reactive({
+    datos %>%
+      filter(country == input$pais,
+             year >= input$rango_anios[1],
+             year <= input$rango_anios[2])
+  })
+  
+  output$grafico_vida <- renderPlot({
+    ggplot(datos_filtrados(), aes(x = year, y = life_expectancy)) +
+      geom_line(color = "steelblue", size = 1.2) +
+      geom_point(color = "darkblue") +
+      labs(title = paste("Esperanza de vida femenina en", input$pais),
+           x = "Año", y = "Esperanza de vida") +
+      theme_minimal()
+  })
+  
+  output$resumen <- renderText({
+    media <- mean(datos_filtrados()$life_expectancy, na.rm = TRUE)
+    paste("Esperanza de vida media en el periodo seleccionado:", round(media, 2), "años.")
+  })
+}
+
+# Ejecutar la aplicación
+shinyApp(ui = ui, server = server)
